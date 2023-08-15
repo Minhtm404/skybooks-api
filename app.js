@@ -4,6 +4,8 @@ const path = require('path');
 
 const viewRouter = require('./routes/viewRoutes');
 const userRouter = require('./routes/userRoutes');
+const errorController = require('./controllers/errorController');
+const AppError = require('./utils/appError');
 
 const app = express();
 
@@ -18,5 +20,11 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 app.use('/', viewRouter);
 app.use('/api/v1/users', userRouter);
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.url} on this server!`, 404));
+});
+
+app.use(errorController);
 
 module.exports = app;
