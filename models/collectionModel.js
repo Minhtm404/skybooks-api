@@ -1,32 +1,20 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const collection = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'A collection must have a name']
-    },
-    slug: { type: String },
-    secret: {
-      type: Boolean,
-      default: false
-    }
+const collectionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'A collection must have a name']
   },
-  {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
-);
+  slug: { type: String }
+});
 
-productSchema.pre('save', function (next) {
+collectionSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
-
+console.log(this.slug)
   next();
 });
 
-productSchema.pre(/^find/, function (next) {
-  this.find({ secret: { $ne: true } });
+const Collection = mongoose.model('Collection', collectionSchema);
 
-  next();
-});
+module.exports = Collection;

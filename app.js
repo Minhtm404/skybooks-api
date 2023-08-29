@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 
-const viewRouter = require('./routes/viewRoutes');
+const collectionRouter = require('./routes/collectionRoutes');
 const userRouter = require('./routes/userRoutes');
 const errorController = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-app.use('/', viewRouter);
+app.use('/api/v1/collections', collectionRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
