@@ -11,7 +11,7 @@ const collectionSchema = new mongoose.Schema({
 
 collectionSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
-console.log(this.slug)
+
   next();
 });
 
