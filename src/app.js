@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
+const cors = require('cors');
 
 const collectionRouter = require('./routes/collectionRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -11,6 +12,9 @@ const app = express();
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use(cors());
+app.options('*', cors());
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
