@@ -36,13 +36,26 @@ const productSchema = new mongoose.Schema(
         message: 'Discount price ({VALUE}) should be below regular price'
       }
     },
+    sku: {
+      type: String
+    },
+    vendor: {
+      type: String
+    },
+    author: { type: String },
+    format: { type: String },
+    dimensions: {
+      type: String
+    },
+    pub_date: {
+      type: String
+    },
     description: {
       type: String,
       trim: true
     },
     imageCover: {
-      type: String,
-      required: [true, 'A product must have a cover image']
+      type: String
     },
     images: {
       type: [String]
@@ -51,10 +64,6 @@ const productSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
       select: false
-    },
-    secret: {
-      type: Boolean,
-      default: false
     }
   },
   {
