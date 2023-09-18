@@ -8,10 +8,20 @@ const productSchema = new mongoose.Schema(
       required: [true, 'A product must have a name'],
       unique: true,
       trim: true,
-      maxlength: [40, 'A product must have less or equal than 40 characters'],
+      maxlength: [150, 'A product must have less or equal than 40 characters'],
       minlength: [10, 'A product must have more or equal than 10 characters']
     },
     slug: { type: String },
+    mainCollection: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Collection'
+    },
+    subCollections: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Collection'
+      }
+    ],
     ratingsAverage: {
       type: Number,
       default: 4.5,
@@ -26,6 +36,9 @@ const productSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, 'A product must have a price']
+    },
+    discount: {
+      type: Number
     },
     priceDiscount: {
       type: Number,
