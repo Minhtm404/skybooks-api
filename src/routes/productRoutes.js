@@ -7,25 +7,27 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(productController.getAllCollections)
+  .get(productController.getAllProducts)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    productController.createCollection
+    productController.createProduct,
   );
 
 router
   .route('/:id')
-  .get(productController.getCollection)
+  .get(productController.getProduct)
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    productController.updateCollection
+    productController.uploadProductImages,
+    productController.resizeProductImages,
+    productController.updateProduct,
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    productController.deleteCollection
+    productController.deleteProduct,
   );
 
 module.exports = router;

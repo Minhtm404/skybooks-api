@@ -1,12 +1,68 @@
+const multer = require('multer');
+const sharp = require('sharp');
+
 const factory = require('./handlerFactory');
 const Product = require('../models/productModel');
+const catchAsync = require('../utils/catchAsync');
 
-exports.getAllCollections = factory.getAll(Product);
+const multerStorage = multer.memoryStorage();
 
-exports.createCollection = factory.createOne(Product);
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    return cb(null, true);
+  }
 
-exports.getCollection = factory.getOne(Product);
+  cb(new AppError('Not an image! Please upload only images.', 400));
+};
 
-exports.updateCollection = factory.updateOne(Product);
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
 
-exports.deleteCollection = factory.deleteOne(Product);
+exports.uploadProductImages = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
+exports.resizeProductImages = catchAsync(async (req, res, next) => {
+  if (!req.files.imageCover || !req.files.images) {
+    return next();
+  }
+
+  req.body.imageCover = `product-${req.params.id}-${Date.now()}-cover.jpeg`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(1333, 2000)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/products/${req.body.imageCover}`);
+
+  req.body.images = [];
+
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `product-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+      await sharp(req.files.images[i].buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/products/${filename}`);
+
+      req.body.images.push(filename);
+    }),
+  );
+
+  next();
+});
+
+exports.getAllProducts = factory.getAll(Product);
+
+exports.createProduct = factory.createOne(Product);
+
+exports.getProduct = factory.getOne(Product);
+
+exports.updateProduct = factory.updateOne(Product);
+
+exports.deleteProduct = factory.deleteOne(Product);

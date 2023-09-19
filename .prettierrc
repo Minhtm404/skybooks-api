@@ -2,6 +2,6 @@
   "arrowParens": "avoid",
   "endOfLine": "crlf",
   "singleQuote": true,
-  "trailingComma": "none",
+  "trailingComma": "all",
   "printWidth": 90
 }
