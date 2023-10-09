@@ -60,7 +60,7 @@ const productSchema = new mongoose.Schema(
     dimensions: {
       type: String
     },
-    pub_date: {
+    publishDate: {
       type: String
     },
     description: {
