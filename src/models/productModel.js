@@ -9,36 +9,34 @@ const productSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       maxlength: [150, 'A product must have less or equal than 40 characters'],
-      minlength: [10, 'A product must have more or equal than 10 characters']
+      minlength: [10, 'A product must have more or equal than 10 characters'],
     },
     slug: { type: String },
     mainCollection: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Collection'
+      ref: 'Collection',
     },
-    subCollections: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Collection'
-      }
-    ],
+    subCollection: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Collection',
+    },
     ratingsAverage: {
       type: Number,
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
-      set: val => Math.round(val * 10) / 10
+      set: val => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
-      default: 0
+      default: 0,
     },
     price: {
       type: Number,
-      required: [true, 'A product must have a price']
+      required: [true, 'A product must have a price'],
     },
     discount: {
-      type: Number
+      type: Number,
     },
     priceDiscount: {
       type: Number,
@@ -46,43 +44,43 @@ const productSchema = new mongoose.Schema(
         validator: function (val) {
           return val < this.price;
         },
-        message: 'Discount price ({VALUE}) should be below regular price'
-      }
+        message: 'Discount price ({VALUE}) should be below regular price',
+      },
     },
     sku: {
-      type: String
+      type: String,
     },
     vendor: {
-      type: String
+      type: String,
     },
     author: { type: String },
     format: { type: String },
     dimensions: {
-      type: String
+      type: String,
     },
     publishDate: {
-      type: String
+      type: String,
     },
     description: {
       type: String,
-      trim: true
+      trim: true,
     },
     imageCover: {
-      type: String
+      type: String,
     },
     images: {
-      type: [String]
+      type: [String],
     },
     createdAt: {
       type: Date,
       default: Date.now(),
-      select: false
-    }
+      select: false,
+    },
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
-  }
+    toObject: { virtuals: true },
+  },
 );
 
 productSchema.pre('save', function (next) {
