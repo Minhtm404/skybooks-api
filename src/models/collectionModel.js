@@ -4,9 +4,17 @@ const slugify = require('slugify');
 const collectionSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'A collection must have a name']
+    required: [true, 'A collection must have a name'],
   },
-  slug: { type: String }
+  mainCollection: {
+    type: Boolean,
+    default: false,
+  },
+  parentCollection: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Collection',
+  },
+  slug: { type: String },
 });
 
 collectionSchema.pre('save', function (next) {
