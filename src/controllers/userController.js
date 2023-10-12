@@ -14,6 +14,20 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+exports.query = catchAsync(async (req, res, next) => {
+  req.query.role = ['user'];
+
+  next();
+});
+
+exports.queryAdmin = () => {
+  if (!req.query.role === 'admin' || !req.query.role === 'staff') {
+    req.query.role = ['admin', 'staff'];
+  }
+
+  next();
+};
+
 exports.getMe = catchAsync(async (req, res, next) => {
   req.params.id = req.user._id;
 
