@@ -20,13 +20,13 @@ exports.query = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.queryAdmin = () => {
+exports.queryAdmin = catchAsync(async (req, res, next) => {
   if (!req.query.role === 'admin' || !req.query.role === 'staff') {
     req.query.role = ['admin', 'staff'];
   }
 
   next();
-};
+});
 
 exports.getMe = catchAsync(async (req, res, next) => {
   req.params.id = req.user._id;
@@ -69,6 +69,24 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllUsers = factory.getAll(User);
+
+exports.createUser = catchAsync(async (req, res, next) => {
+  const { name, email, password, passwordConfirm, role, status } = req.body;
+
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+    role,
+    status,
+  });
+
+  res.status(201).json({
+    success: 'success',
+    data: newUser,
+  });
+});
 
 exports.getUser = factory.getOne(User);
 

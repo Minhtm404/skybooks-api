@@ -61,6 +61,8 @@ exports.updateOne = Model =>
 
     await doc.save();
 
+    doc.password = undefined;
+
     res.status(200).json({
       status: 'success',
       data: doc,

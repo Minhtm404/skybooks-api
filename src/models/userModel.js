@@ -6,25 +6,28 @@ const validator = require('validator');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please tell us a name']
+    required: [true, 'Please tell us a name'],
   },
   email: {
     type: String,
     required: [true, 'Please provide your email'],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
+    validate: [validator.isEmail, 'Please provide a valid email'],
   },
   role: {
     type: String,
     enum: ['user', 'staff', 'admin'],
-    default: 'user'
+    default: 'user',
   },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
     minlength: 8,
-    select: false
+    select: false,
+  },
+  passwordLength: {
+    type: Number,
   },
   passwordConfirm: {
     type: String,
@@ -33,23 +36,22 @@ const userSchema = new mongoose.Schema({
       validator: function (el) {
         return el === this.password;
       },
-      message: 'Passwords are not the same'
-    }
+      message: 'Passwords are not the same',
+    },
   },
   passwordChangedAt: {
-    type: Date
+    type: Date,
   },
   passwordResetToken: {
-    type: String
+    type: String,
   },
   passwordResetExpires: {
-    type: Date
+    type: Date,
   },
   active: {
     type: Boolean,
     default: true,
-    // select: false
-  }
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -57,6 +59,7 @@ userSchema.pre('save', async function (next) {
     return next();
   }
 
+  this.passwordLength = this.password.length;
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
 

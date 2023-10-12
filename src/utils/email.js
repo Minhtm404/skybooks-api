@@ -15,16 +15,16 @@ module.exports = class Email {
       port: process.env.EMAIL_PORT,
       auth: {
         user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD
-      }
+        pass: process.env.EMAIL_PASSWORD,
+      },
     });
   }
 
   async send(template, subject) {
-    const html = pug.renderFile(path.join(__dirname, `../views/email/${template}.pug`), {
+    const html = pug.renderFile(path.join(__dirname, `../views/${template}.pug`), {
       name: this.name,
       url: this.url,
-      subject
+      subject,
     });
 
     const mailOptions = {
@@ -32,7 +32,7 @@ module.exports = class Email {
       to: this.to,
       subject,
       html,
-      text: htmlToText.convert(html)
+      text: htmlToText.convert(html),
     };
 
     await this.createTransport().sendMail(mailOptions);
@@ -45,7 +45,7 @@ module.exports = class Email {
   async sendPasswordReset() {
     await this.send(
       'passwordReset',
-      'Your password reset token (valid for only 10 minutes).'
+      'Your password reset token (valid for only 10 minutes).',
     );
   }
 };

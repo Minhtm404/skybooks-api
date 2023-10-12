@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/collections', collectionRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/users', userRouter);

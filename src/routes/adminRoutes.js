@@ -9,6 +9,8 @@ router.post('/login', authController.loginAdmin);
 
 router.use(authController.protect);
 
+router.post('/update-password', authController.updatePassword);
+
 router
   .route('/me')
   .get(userController.getMe, userController.getUser)
@@ -17,7 +19,10 @@ router
 
 router.use(authController.restrictTo('admin'));
 
-router.route('/').get(userController.queryAdmin, userController.getAllUsers);
+router
+  .route('/')
+  .get(userController.queryAdmin, userController.getAllUsers)
+  .post(userController.createUser);
 
 router
   .route('/:id')
