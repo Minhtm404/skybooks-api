@@ -21,7 +21,7 @@ exports.query = catchAsync(async (req, res, next) => {
 });
 
 exports.queryAdmin = catchAsync(async (req, res, next) => {
-  if (!req.query.role === 'admin' || !req.query.role === 'staff') {
+  if (!req.query.role === 'admin' && !req.query.role === 'staff') {
     req.query.role = ['admin', 'staff'];
   }
 
