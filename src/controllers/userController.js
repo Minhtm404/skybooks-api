@@ -93,6 +93,20 @@ exports.createUser = catchAsync(async (req, res, next) => {
 
 exports.getUser = factory.getOne(User);
 
-exports.updateUser = factory.updateOne(User);
+exports.updateUser = catchAsync(async (req, res, next) => {
+  const filteredBody = filterObj(req.body, 'name', 'email', 'role', 'status');
+
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
 
 exports.deleteUser = factory.deleteOne(User);
