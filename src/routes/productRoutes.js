@@ -14,6 +14,8 @@ router
     productController.createProduct,
   );
 
+router.route('/aliases/:alias').get(productController.getProductByAlias);
+
 router
   .route('/:id')
   .get(productController.getProduct)

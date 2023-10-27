@@ -63,6 +63,15 @@ exports.createProduct = factory.createOne(Product);
 
 exports.getProduct = factory.getOne(Product);
 
+exports.getProductByAlias = catchAsync(async (req, res, next) => {
+  const product = await Product.findOne({ slug: req.params.alias });
+
+  res.status(200).json({
+    status: 'success',
+    data: product,
+  });
+});
+
 exports.updateProduct = factory.updateOne(Product);
 
 exports.deleteProduct = factory.deleteOne(Product);
