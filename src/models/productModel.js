@@ -71,6 +71,10 @@ const productSchema = new mongoose.Schema(
     images: {
       type: [String],
     },
+    quantity: {
+      type: Number,
+      required: [true, 'A product must have a quantity'],
+    },
     createdAt: {
       type: Date,
       default: Date.now(),
