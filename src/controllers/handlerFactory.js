@@ -44,7 +44,7 @@ exports.getOne = (Model, popOptions) =>
 exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
     req.body.user = req.params.id ? req.params.id : undefined;
-    console.log(req.body);
+
     const newDoc = await Model.create(req.body);
 
     res.status(201).json({
@@ -56,7 +56,7 @@ exports.createOne = Model =>
 exports.updateOne = Model =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
-    console.log(req.body);
+
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
     }
