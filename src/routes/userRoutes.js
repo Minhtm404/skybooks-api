@@ -3,6 +3,7 @@ const express = require('express');
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const cartController = require('../controllers/cartController');
+const orderController = require('../controllers/orderController');
 
 const router = express.Router();
 
@@ -30,6 +31,13 @@ router
   .route('/cart/:id')
   .patch(cartController.updateCartItem)
   .delete(cartController.deleteCartItem);
+
+router
+  .route('/orders')
+  .get(userController.getMe, orderController.getAllOrders)
+  .post(userController.getMe, orderController.createOrder);
+
+router.route('/orders/:id').get(orderController.getOrder);
 
 router.use(authController.restrictTo('admin', 'staff'));
 
