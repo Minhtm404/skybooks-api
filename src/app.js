@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const adminRouter = require('./routes/adminRoutes');
 const collectionRouter = require('./routes/collectionRoutes');
+const postRouter = require('./routes/postRoutes');
 const productRouter = require('./routes/productRoutes');
 const userRouter = require('./routes/userRoutes');
 const errorController = require('./controllers/errorController');
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 app.use('/api/v1/admins', adminRouter);
 app.use('/api/v1/collections', collectionRouter);
+app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/users', userRouter);
 
