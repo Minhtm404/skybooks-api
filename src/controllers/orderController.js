@@ -1,5 +1,5 @@
 const factory = require('./handlerFactory');
-const Order = require('../models/OrderModel');
+const Order = require('../models/orderModel');
 
 exports.getAllOrders = factory.getAll(Order);
 exports.createOrder = factory.createOne(Order);
