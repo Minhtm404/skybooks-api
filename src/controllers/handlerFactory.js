@@ -4,6 +4,10 @@ const catchAsync = require('../utils/catchAsync');
 
 exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
+    if (req.params.id) {
+      req.query.filter = { user: req.params.id };
+    }
+
     const features = new APIFeatures(Model.find(), req.query)
       .filter()
       .sort()
@@ -40,7 +44,7 @@ exports.getOne = (Model, popOptions) =>
 exports.createOne = Model =>
   catchAsync(async (req, res, next) => {
     req.body.user = req.params.id ? req.params.id : undefined;
-console.log(req.body)
+    console.log(req.body);
     const newDoc = await Model.create(req.body);
 
     res.status(201).json({
