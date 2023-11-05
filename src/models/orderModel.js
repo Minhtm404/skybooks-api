@@ -6,30 +6,39 @@ const orderSchema = new mongoose.Schema({
       product: {
         type: mongoose.Schema.ObjectId,
         ref: 'Product',
-        required: [true, 'Order must have a product']
+        required: [true, 'Order must have a product'],
       },
       quantity: {
         type: Number,
-        required: [true, 'Please tell us quantity of product']
-      }
-    }
+        required: [true, 'Please tell us quantity of product'],
+      },
+    },
   ],
   user: {
     type: mongoose.Schema.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
   price: {
     type: Number,
-    require: [true, 'Order must have a price.']
+    require: [true, 'Order must have a price.'],
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   paid: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
+});
+
+orderSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'user', select: 'name' }).populate({
+    path: 'products.product',
+    select: 'name',
+  });
+
+  next();
 });
 
 const Order = mongoose.model('Order', orderSchema);
