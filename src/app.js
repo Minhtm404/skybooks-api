@@ -8,6 +8,7 @@ const collectionRouter = require('./routes/collectionRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const postRouter = require('./routes/postRoutes');
 const productRouter = require('./routes/productRoutes');
+const statsRouter = require('./routes/statsRoutes');
 const userRouter = require('./routes/userRoutes');
 const errorController = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -32,6 +33,7 @@ app.use('/api/v1/collections', collectionRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/products', productRouter);
+app.use('/api/v1/stats', statsRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
