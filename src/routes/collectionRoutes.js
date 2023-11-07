@@ -7,11 +7,11 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(collectionController.getAllCollections)
+  .get(collectionController.query, collectionController.getAllCollections)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    collectionController.createCollection
+    collectionController.createCollection,
   );
 
 router
@@ -20,12 +20,12 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    collectionController.updateCollection
+    collectionController.updateCollection,
   )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
-    collectionController.deleteCollection
+    collectionController.deleteCollection,
   );
 
 module.exports = router;

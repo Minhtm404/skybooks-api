@@ -17,6 +17,22 @@ const filterObj = (obj, ...allowedFields) => {
 exports.query = catchAsync(async (req, res, next) => {
   req.query.role = ['user'];
 
+  if (req.query.keyword) {
+    req.query = {
+      ...req.query,
+      $or: [
+        {
+          name: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
+          email: { $regex: req.query.keyword, $options: 'i' },
+        },
+      ],
+    };
+
+    delete req.query.keyword;
+  }
+
   next();
 });
 
@@ -27,6 +43,22 @@ exports.queryAdmin = catchAsync(async (req, res, next) => {
   ) {
     req.query.role = ['admin', 'staff'];
   }
+
+  if (req.query.keyword) {
+    req.query = {
+      ...req.query,
+      $or: [
+        {
+          name: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
+          email: { $regex: req.query.keyword, $options: 'i' },
+        },
+      ],
+    };
+
+    delete req.query.keyword;
+  }console.log(req.query)
 
   next();
 });

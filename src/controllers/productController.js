@@ -57,6 +57,26 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.query = catchAsync(async (req, res, next) => {
+  if (req.query.keyword) {
+    req.query = {
+      ...req.query,
+      $or: [
+        {
+          name: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
+          sku: { $regex: req.query.keyword, $options: 'i' },
+        },
+      ],
+    };
+
+    delete req.query.keyword;
+  }
+
+  next();
+});
+
 exports.getAllProducts = factory.getAll(Product);
 
 exports.createProduct = factory.createOne(Product);
