@@ -94,7 +94,15 @@ productSchema.pre('save', function (next) {
 });
 
 productSchema.pre(/^find/, function (next) {
-  this.find({ secret: { $ne: true } });
+  this.find({ secret: { $ne: true } })
+    .populate({
+      path: 'mainCollection',
+      select: ' name',
+    })
+    .populate({
+      path: 'subCollection',
+      select: 'name',
+    });
 
   next();
 });

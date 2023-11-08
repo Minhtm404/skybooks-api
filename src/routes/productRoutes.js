@@ -1,7 +1,6 @@
 const express = require('express');
 
 const authController = require('../controllers/authController');
-const userController = require('../controllers/userController');
 const productController = require('../controllers/productController');
 const reviewController = require('../controllers/reviewController');
 
@@ -19,10 +18,6 @@ router
 router.route('/aliases/:alias').get(productController.getProductByAlias);
 
 router
-  .route('/reviews')
-  .post(authController.protect, userController.getMe, reviewController.createReview);
-
-router
   .route('/:id')
   .get(productController.getProduct)
   .patch(
@@ -37,5 +32,7 @@ router
     authController.restrictTo('admin', 'staff'),
     productController.deleteProduct,
   );
+
+router.route('/:id/reviews').get(reviewController.query, reviewController.getAllReviews);
 
 module.exports = router;

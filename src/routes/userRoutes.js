@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const cartController = require('../controllers/cartController');
 const orderController = require('../controllers/orderController');
+const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
@@ -38,6 +39,10 @@ router
   .post(userController.getMe, orderController.createOrder);
 
 router.route('/orders/:id').get(orderController.getOrder);
+
+router
+  .route('/reviews')
+  .post(authController.protect, userController.getMe, reviewController.createReview);
 
 router.use(authController.restrictTo('admin', 'staff'));
 
