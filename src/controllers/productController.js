@@ -3,6 +3,7 @@ const sharp = require('sharp');
 
 const factory = require('./handlerFactory');
 const Product = require('../models/productModel');
+const Collection = require('../models/collectionModel');
 const catchAsync = require('../utils/catchAsync');
 
 const multerStorage = multer.memoryStorage();
@@ -64,6 +65,13 @@ exports.query = catchAsync(async (req, res, next) => {
       $or: [
         {
           name: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
+          mainCollection: {
+            $in: await Collection.find({
+              name: { $regex: req.query.keyword, $options: 'i' },
+            }).distinct('_id'),
+          },
         },
         {
           sku: { $regex: req.query.keyword, $options: 'i' },

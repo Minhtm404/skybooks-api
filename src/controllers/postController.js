@@ -1,12 +1,24 @@
 const factory = require('./handlerFactory');
 const Post = require('../models/postModel');
+const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.query = catchAsync(async (req, res, next) => {
   if (req.query.keyword) {
     req.query = {
       ...req.query,
-      title: { $regex: req.query.keyword, $options: 'i' },
+      $or: [
+        {
+          user: {
+            $in: await User.find({
+              name: { $regex: req.query.keyword, $options: 'i' },
+            }).distinct('_id'),
+          },
+        },
+        {
+          title: { $regex: req.query.keyword, $options: 'i' },
+        },
+      ],
     };
 
     delete req.query.keyword;

@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.use(authController.protect, authController.restrictTo('admin', 'staff'));
 
-router.route('/').get(orderController.getAllOrders);
+router.route('/').get(orderController.query, orderController.getAllOrders);
 
 module.exports = router;

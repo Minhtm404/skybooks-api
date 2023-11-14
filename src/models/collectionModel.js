@@ -23,6 +23,12 @@ collectionSchema.pre('save', function (next) {
   next();
 });
 
+collectionSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'parentCollection', select: 'name' });
+
+  next();
+});
+
 const Collection = mongoose.model('Collection', collectionSchema);
 
 module.exports = Collection;

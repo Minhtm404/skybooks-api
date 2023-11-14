@@ -54,11 +54,14 @@ exports.queryAdmin = catchAsync(async (req, res, next) => {
         {
           email: { $regex: req.query.keyword, $options: 'i' },
         },
+        {
+          role: { $regex: req.query.keyword, $options: 'i' },
+        },
       ],
     };
 
     delete req.query.keyword;
-  }console.log(req.query)
+  }
 
   next();
 });

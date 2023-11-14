@@ -6,7 +6,18 @@ exports.query = catchAsync(async (req, res, next) => {
   if (req.query.keyword) {
     req.query = {
       ...req.query,
-      name: { $regex: req.query.keyword, $options: 'i' },
+      $or: [
+        {
+          name: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
+          parentCollection: {
+            $in: await Collection.find({
+              name: { $regex: req.query.keyword, $options: 'i' },
+            }).distinct('_id'),
+          },
+        },
+      ],
     };
 
     delete req.query.keyword;
