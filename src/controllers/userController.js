@@ -27,6 +27,9 @@ exports.query = catchAsync(async (req, res, next) => {
         {
           email: { $regex: req.query.keyword, $options: 'i' },
         },
+        {
+          phoneNumber: { $regex: req.query.keyword, $options: 'i' },
+        },
       ],
     };
 
