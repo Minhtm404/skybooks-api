@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'staff', 'admin'],
     default: 'user',
   },
+  phoneNumber: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
