@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const postSchema = new mongoose.Schema({
   user: {
@@ -9,10 +10,17 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A post must have a content'],
   },
+  slug: { type: String },
   content: {
     type: String,
     required: [true, 'A post must have a content'],
   },
+});
+
+postSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+
+  next();
 });
 
 postSchema.pre(/^find/, function (next) {
