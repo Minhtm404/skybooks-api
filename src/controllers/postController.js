@@ -28,7 +28,20 @@ exports.query = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllPosts = factory.getAll(Post);
+
 exports.createPost = factory.createOne(Post);
+
 exports.getPost = factory.getOne(Post);
+
+exports.getPostByAlias = catchAsync(async (req, res, next) => {
+  const post = await Post.findOne({ slug: req.params.alias });
+
+  res.status(200).json({
+    status: 'success',
+    data: post,
+  });
+});
+
 exports.updatePost = factory.updateOne(Post);
+
 exports.deletePost = factory.deleteOne(Post);

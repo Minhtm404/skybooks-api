@@ -16,6 +16,8 @@ router
     postController.createPost,
   );
 
+router.route('/aliases/:alias').get(postController.getPostByAlias);
+
 router
   .route('/:id')
   .get(postController.getPost)
