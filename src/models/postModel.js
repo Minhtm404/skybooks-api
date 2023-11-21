@@ -15,6 +15,10 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A post must have a content'],
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 postSchema.pre('save', function (next) {
