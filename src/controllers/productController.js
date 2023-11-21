@@ -59,6 +59,20 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
 });
 
 exports.query = catchAsync(async (req, res, next) => {
+  if (req.query.category) {
+    req.query = {
+      ...req.query,
+
+      mainCollection: {
+        $in: await Collection.find({
+          slug: { $regex: req.query.category, $options: 'i' },
+        }).distinct('_id'),
+      },
+    };
+
+    delete req.query.category;
+  }
+
   if (req.query.keyword) {
     req.query = {
       ...req.query,
