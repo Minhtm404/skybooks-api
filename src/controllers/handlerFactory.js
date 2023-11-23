@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -5,7 +6,9 @@ const catchAsync = require('../utils/catchAsync');
 exports.getAll = Model =>
   catchAsync(async (req, res, next) => {
     if (req.params.id) {
-      req.query.filter = { user: req.params.id };
+      req.query = {
+        user: await User.findById(req.params.id).distinct('_id'),
+      };
     }
 
     const features = new APIFeatures(Model.find(), req.query)
