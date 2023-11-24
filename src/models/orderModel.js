@@ -22,13 +22,27 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     require: [true, 'Order must have a price.'],
   },
+  name: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  paid: {
+  paymentStatus: {
     type: Boolean,
     default: false,
+  },
+  orderStatus: {
+    type: String,
+    enum: ['new', 'delivery', 'complete'],
+    default: 'new',
   },
 });
 
