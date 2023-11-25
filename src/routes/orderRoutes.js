@@ -9,4 +9,6 @@ router.use(authController.protect, authController.restrictTo('admin', 'staff'));
 
 router.route('/').get(orderController.query, orderController.getAllOrders);
 
+router.route('/:id').patch(orderController.updateOrder);
+
 module.exports = router;
