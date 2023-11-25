@@ -73,6 +73,20 @@ exports.query = catchAsync(async (req, res, next) => {
     delete req.query.category;
   }
 
+  if (req.query.subCategory) {
+    req.query = {
+      ...req.query,
+
+      subCollection: {
+        $in: await Collection.find({
+          slug: { $regex: req.query.subCategory, $options: 'i' },
+        }).distinct('_id'),
+      },
+    };
+
+    delete req.query.subCategory;
+  }
+
   if (req.query.keyword) {
     req.query = {
       ...req.query,
