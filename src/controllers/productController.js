@@ -28,8 +28,6 @@ const upload = multer({
 exports.uploadProductImages = upload.single('imageCover');
 
 exports.resizeProductImages = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.files);
   if (!req.file) {
     return next();
   }

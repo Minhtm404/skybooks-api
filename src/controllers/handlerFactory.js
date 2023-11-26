@@ -57,7 +57,7 @@ exports.createOne = Model =>
   });
 
 exports.updateOne = Model =>
-  catchAsync(async (req, res, next) => {console.log(req.body);
+  catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
 
     if (!doc) {
