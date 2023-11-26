@@ -12,6 +12,8 @@ router
   .post(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
+    productController.uploadProductImages,
+    productController.resizeProductImages,
     productController.createProduct,
   );
 
