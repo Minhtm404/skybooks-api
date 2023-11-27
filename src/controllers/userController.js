@@ -132,7 +132,15 @@ exports.createUser = catchAsync(async (req, res, next) => {
 exports.getUser = factory.getOne(User);
 
 exports.updateUser = catchAsync(async (req, res, next) => {
-  const filteredBody = filterObj(req.body, 'name', 'email', 'role', 'status');
+  const filteredBody = filterObj(
+    req.body,
+    'name',
+    'email',
+    'phoneNumber',
+    'address',
+    'role',
+    'status',
+  );
 
   const updatedUser = await User.findByIdAndUpdate(req.params.id, filteredBody, {
     new: true,
