@@ -21,7 +21,7 @@ exports.getAll = Model =>
 
     res.status(200).json({
       status: 'success',
-      results: docs.length,
+      results: await Model.countDocuments(req.query),
       data: docs,
     });
   });
