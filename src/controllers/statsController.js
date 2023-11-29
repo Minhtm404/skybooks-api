@@ -138,6 +138,88 @@ exports.getStats = catchAsync(async (req, res, next) => {
     },
   ]);
 
+  const topPerformers = await Order.aggregate([
+    {
+      $unwind: '$products', // Deconstructs the products array
+    },
+    {
+      $group: {
+        _id: '$products.product', // Grouping by product ID
+        productName: { $first: '$products.name' }, // Collecting the product name
+        totalSold: { $sum: '$products.quantity' }, // Calculating the total quantity sold for each product
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails',
+    },
+    {
+      $addFields: {
+        productName: '$productDetails.name', // Update productName using productDetails
+      },
+    },
+    {
+      $project: {
+        _id: 1, // Keep the product ID
+        productName: 1, // Keep the product name
+        totalSold: 1, // Keep the total quantity sold
+      },
+    },
+    {
+      $sort: { totalSold: -1 }, // Sorting by totalSold in descending order
+    },
+    {
+      $limit: 5, // Limiting to the top 5 best-selling products
+    },
+  ]);
+
+  const lowPerformers = await Product.aggregate([
+    {
+      $lookup: {
+        from: 'orders',
+        localField: '_id',
+        foreignField: 'products.product',
+        as: 'orderDetails',
+      },
+    },
+    {
+      $addFields: {
+        totalSold: {
+          $cond: {
+            if: { $isArray: '$orderDetails' },
+            then: { $size: '$orderDetails' },
+            else: 0,
+          },
+        },
+      },
+    },
+    {
+      $match: {
+        totalSold: { $gte: 0, $lt: 5 }, // Filter for products sold more than 0 and less than 5 times
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        totalSold: 1,
+      },
+    },
+    {
+      $sort: { totalSold: 1 }, // Sorting by totalSold in ascending order (least sold)
+    },
+    {
+      $limit: 5, // Limiting to the top 5 least-selling products
+    },
+  ]);
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -147,6 +229,8 @@ exports.getStats = catchAsync(async (req, res, next) => {
       totalOrder,
       orderStats,
       collectionStats,
+      topPerformers,
+      lowPerformers,
     },
   });
 });
