@@ -73,7 +73,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     totalOrder = await Order.countDocuments();
   }
 
-  const lastSixMonths = await Order.aggregate([
+  const orderStats = await Order.aggregate([
     {
       $match: {
         createdAt: {
@@ -103,6 +103,41 @@ exports.getStats = catchAsync(async (req, res, next) => {
     },
   ]);
 
+  const collectionStats = await Order.aggregate([
+    {
+      $unwind: '$products', // Deconstructs the products array to work with individual products
+    },
+    {
+      $lookup: {
+        from: 'products', // Assuming the collection name is 'products'
+        localField: 'products.product',
+        foreignField: '_id',
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: '$productDetails', // Deconstructs the productDetails array
+    },
+    {
+      $lookup: {
+        from: 'collections', // Assuming the collection name is 'collections'
+        localField: 'productDetails.mainCollection', // Assuming 'mainCollection' is the field referencing the collection
+        foreignField: '_id',
+        as: 'collectionDetails',
+      },
+    },
+    {
+      $unwind: '$collectionDetails', // Deconstructs the collectionDetails array
+    },
+    {
+      $group: {
+        _id: '$collectionDetails._id', // Grouping by collection ID
+        collectionName: { $first: '$collectionDetails.name' }, // Collecting the first occurrence of the collection name
+        count: { $sum: 1 }, // Counting occurrences of products in each collection
+      },
+    },
+  ]);
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -110,7 +145,8 @@ exports.getStats = catchAsync(async (req, res, next) => {
       totalCustomer,
       totalProduct,
       totalOrder,
-      lastSixMonths,
+      orderStats,
+      collectionStats,
     },
   });
 });
