@@ -55,7 +55,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       data: {
-        totalPrice: orderStats.totalPrice,
+        totalPrice: orderStats?.totalPrice ?? 0,
         totalCustomer,
         totalProduct,
         totalOrder,
