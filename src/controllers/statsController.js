@@ -163,12 +163,31 @@ exports.getStats = catchAsync(async (req, res, next) => {
     {
       $addFields: {
         productName: '$productDetails.name', // Update productName using productDetails
+        productImage: '$productDetails.imageCover', // Adding productImage field from imageCover in productDetails
+      },
+    },
+    {
+      $lookup: {
+        from: 'collections',
+        localField: 'productDetails.mainCollection',
+        foreignField: '_id',
+        as: 'collectionDetails',
+      },
+    },
+    {
+      $unwind: '$collectionDetails',
+    },
+    {
+      $addFields: {
+        productCollectionName: '$collectionDetails.name', // Adding productCollectionName field from name in collectionDetails
       },
     },
     {
       $project: {
         _id: 1, // Keep the product ID
         productName: 1, // Keep the product name
+        productImage: 1, // Keep the product image
+        productCollectionName: 1, // Keep the product collection name
         totalSold: 1, // Keep the total quantity sold
       },
     },
