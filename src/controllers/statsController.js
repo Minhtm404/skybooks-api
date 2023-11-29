@@ -225,17 +225,49 @@ exports.getStats = catchAsync(async (req, res, next) => {
       },
     },
     {
-      $project: {
-        _id: 1,
-        name: 1,
-        totalSold: 1,
-      },
-    },
-    {
       $sort: { totalSold: 1 }, // Sorting by totalSold in ascending order (least sold)
     },
     {
       $limit: 5, // Limiting to the top 5 least-selling products
+    },
+    {
+      $lookup: {
+        from: 'collections',
+        localField: 'mainCollection', // Assuming 'mainCollection' is the field referencing the collection
+        foreignField: '_id',
+        as: 'collectionDetails',
+      },
+    },
+    {
+      $unwind: { path: '$collectionDetails', preserveNullAndEmptyArrays: true },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        totalSold: 1,
+        productCollectionName: '$collectionDetails.name', // Adding productCollectionName field from name in collectionDetails
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'productDetails',
+      },
+    },
+    {
+      $unwind: { path: '$productDetails', preserveNullAndEmptyArrays: true },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        totalSold: 1,
+        productCollectionName: 1, // Keep the product collection name
+        productImage: '$productDetails.imageCover', // Adding productImage field from imageCover in productDetails
+      },
     },
   ]);
 
