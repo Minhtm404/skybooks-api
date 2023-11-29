@@ -24,6 +24,11 @@ const calculateFromTo = key => {
 };
 
 exports.getStats = catchAsync(async (req, res, next) => {
+  let totalPrice;
+  let totalCustomer;
+  let totalProduct;
+  let totalOrder;
+
   if (req.query.range) {
     const { from, to } = calculateFromTo(req.query.range);
 
@@ -41,25 +46,16 @@ exports.getStats = catchAsync(async (req, res, next) => {
       },
     ]);
 
-    const totalCustomer = await User.countDocuments({
+    totalPrice = orderStats?.totalPrice ?? 0;
+    totalCustomer = await User.countDocuments({
       role: 'user',
       createdAt: { $gte: from, $lte: to },
     });
-    const totalProduct = await Product.countDocuments({
+    totalProduct = await Product.countDocuments({
       createdAt: { $gte: from, $lte: to },
     });
-    const totalOrder = await Order.countDocuments({
+    totalOrder = await Order.countDocuments({
       createdAt: { $gte: from, $lte: to },
-    });
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        totalPrice: orderStats?.totalPrice ?? 0,
-        totalCustomer,
-        totalProduct,
-        totalOrder,
-      },
     });
   } else {
     const [orderStats] = await Order.aggregate([
@@ -71,18 +67,50 @@ exports.getStats = catchAsync(async (req, res, next) => {
       },
     ]);
 
-    const totalCustomer = await User.countDocuments({ role: 'user' });
-    const totalProduct = await Product.countDocuments();
-    const totalOrder = await Order.countDocuments();
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        totalPrice: orderStats.totalPrice,
-        totalCustomer,
-        totalProduct,
-        totalOrder,
-      },
-    });
+    totalPrice = orderStats?.totalPrice ?? 0;
+    totalCustomer = await User.countDocuments({ role: 'user' });
+    totalProduct = await Product.countDocuments();
+    totalOrder = await Order.countDocuments();
   }
+
+  const lastSixMonths = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: moment().startOf('month').subtract(5, 'months').utc().toDate(),
+        }, // Filter for the last 6 months
+      },
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: { format: '%Y-%m', date: '$createdAt' }, // Grouping by year-month
+        },
+        totalAmount: { $sum: '$price' }, // Calculating total price for each month
+        totalOrders: { $sum: 1 }, // Counting the number of orders for each month
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        month: '$_id',
+        totalAmount: 1,
+        totalOrders: 1,
+      },
+    },
+    {
+      $sort: { month: 1 }, // Optionally sorting by month
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      totalPrice,
+      totalCustomer,
+      totalProduct,
+      totalOrder,
+      lastSixMonths,
+    },
+  });
 });
