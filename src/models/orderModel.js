@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const CartItem = require('../models/cartItemModel');
+
 const orderSchema = new mongoose.Schema({
   products: [
     {
@@ -46,6 +48,10 @@ const orderSchema = new mongoose.Schema({
   },
 });
 
+orderSchema.statics.clearCartItem = async function (userId) {
+  await CartItem.deleteMany({ user: userId });
+};
+
 orderSchema.pre(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name' }).populate({
     path: 'products.product',
@@ -53,6 +59,10 @@ orderSchema.pre(/^find/, function (next) {
   });
 
   next();
+});
+
+orderSchema.post('save', function (doc) {
+  this.constructor.clearCartItem(this.user);
 });
 
 const Order = mongoose.model('Order', orderSchema);
