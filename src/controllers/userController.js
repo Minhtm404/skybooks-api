@@ -139,7 +139,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     'phoneNumber',
     'address',
     'role',
-    'status',
+    'active',
   );
 
   const updatedUser = await User.findByIdAndUpdate(req.params.id, filteredBody, {
