@@ -1,7 +1,41 @@
+const multer = require('multer');
+const uploadcareStorage = require('multer-storage-uploadcare');
+
 const factory = require('./handlerFactory');
 const Post = require('../models/postModel');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
+
+const multerStorage = uploadcareStorage({
+  public_key: process.env.UPLOADCARE_PUBLIC_KEY,
+  private_key: process.env.UPLOADCARE_SECRET_KEY,
+  store: 'auto',
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    return cb(null, true);
+  }
+
+  cb(new AppError('Not an image! Please upload only images.', 400));
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadProductImages = upload.single('imageCover');
+
+exports.resizeProductImages = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+
+  req.body.imageCover = `${process.env.UPLOADCARE}${req.file.uploadcare_file_id}`;
+
+  next();
+});
 
 exports.query = catchAsync(async (req, res, next) => {
   if (req.query.keyword) {

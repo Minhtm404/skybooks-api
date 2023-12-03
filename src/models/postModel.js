@@ -15,6 +15,9 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A post must have a content'],
   },
+  imageCover: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

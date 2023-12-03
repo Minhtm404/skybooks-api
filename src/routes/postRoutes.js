@@ -13,6 +13,8 @@ router
     authController.protect,
     authController.restrictTo('admin', 'staff'),
     userController.getMe,
+    postController.uploadProductImages,
+    postController.resizeProductImages,
     postController.createPost,
   );
 
@@ -24,6 +26,8 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('admin', 'staff'),
+    postController.uploadProductImages,
+    postController.resizeProductImages,
     postController.updatePost,
   )
   .delete(
