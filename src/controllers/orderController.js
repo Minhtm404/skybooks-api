@@ -10,6 +10,9 @@ exports.query = catchAsync(async (req, res, next) => {
       ...req.query,
       $or: [
         {
+          idString: { $regex: req.query.keyword, $options: 'i' },
+        },
+        {
           user: {
             $in: await User.find({
               name: { $regex: req.query.keyword, $options: 'i' },

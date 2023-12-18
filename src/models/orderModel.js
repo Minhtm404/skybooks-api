@@ -46,6 +46,10 @@ const orderSchema = new mongoose.Schema({
     enum: ['new', 'delivery', 'complete'],
     default: 'new',
   },
+  idString: {
+    type: String,
+    unique: true,
+  },
 });
 
 orderSchema.statics.clearCartItem = async function (userId) {
@@ -58,6 +62,12 @@ orderSchema.pre(/^find/, function (next) {
     select: 'name price imageCover',
   });
 
+  next();
+});
+
+orderSchema.pre('save', function (next) {
+  // Generate idString from the ObjectId
+  this.idString = this._id.toHexString();
   next();
 });
 
