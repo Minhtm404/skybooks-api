@@ -86,7 +86,7 @@ const productSchema = new mongoose.Schema(
 
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
-  this.priceDiscount = this.price * (this.discount ? this.discount / 100 : 1);
+  this.priceDiscount = this.price * (1 - (this.discount ? this.discount / 100 : 0));
 
   next();
 });
