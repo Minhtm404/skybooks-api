@@ -59,7 +59,7 @@ orderSchema.statics.clearCartItem = async function (userId) {
 orderSchema.pre(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name' }).populate({
     path: 'products.product',
-    select: 'name price imageCover',
+    select: 'name price discount priceDiscount imageCover',
   });
 
   next();

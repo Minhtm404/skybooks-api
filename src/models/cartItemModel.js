@@ -18,7 +18,7 @@ const cartItemSchema = new mongoose.Schema({
 cartItemSchema.pre(/^find/, function (next) {
   this.populate({ path: 'user', select: 'name' }).populate({
     path: 'product',
-    select: 'name price imageCover',
+    select: 'name price discount priceDiscount imageCover',
   });
 
   next();
