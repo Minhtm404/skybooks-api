@@ -1,5 +1,6 @@
 const factory = require('./handlerFactory');
 const Collection = require('../models/collectionModel');
+const Product = require('../models/productModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.query = catchAsync(async (req, res, next) => {
@@ -34,4 +35,33 @@ exports.getCollection = factory.getOne(Collection);
 
 exports.updateCollection = factory.updateOne(Collection);
 
-exports.deleteCollection = factory.deleteOne(Collection);
+exports.deleteCollection = catchAsync(async (req, res, next) => {
+  const collection = await Collection.findById(req.params.id);
+
+  if (!collection) {
+    return next(new AppError(`No collection found with that ID`, 404));
+  }
+
+  const countChild = await Collection.countDocuments({
+    parentCollection: collection._id,
+  });
+
+  if (countChild > 0) {
+    return next(new AppError(`Can not delete this collection`, 403));
+  }
+
+  const countProduct = await Product.countDocuments({
+    $or: [{ mainCollection: collection._id }, { subCollection: collection._id }],
+  });
+
+  if (countProduct > 0) {
+    return next(new AppError(`Can not delete this collection`, 403));
+  }
+
+  await collection.deleteOne();
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});

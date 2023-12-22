@@ -1,4 +1,6 @@
 const factory = require('./handlerFactory');
+const CartItem = require('../models/cartItemModel');
+const Order = require('../models/orderModel');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -155,4 +157,23 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = factory.deleteOne(User);
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+
+  if (!user) {
+    return next(new AppError(`No user found with that ID`, 404));
+  }
+
+  await CartItem.deleteMany({
+    user: user._id,
+  });
+
+  await Order.deleteMany({
+    user: user._id,
+  });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});

@@ -15,7 +15,7 @@ router
   .route('/me')
   .get(userController.getMe, userController.getUser)
   .patch(userController.updateMe, userController.updateUser)
-  .delete(userController.deleteMe, userController.deleteUser);
+  .delete(userController.deleteMe);
 
 router.use(authController.restrictTo('admin'));
 

@@ -2,8 +2,9 @@ const multer = require('multer');
 const uploadcareStorage = require('multer-storage-uploadcare');
 
 const factory = require('./handlerFactory');
-const Product = require('../models/productModel');
 const Collection = require('../models/collectionModel');
+const Order = require('../models/orderModel');
+const Product = require('../models/productModel');
 const catchAsync = require('../utils/catchAsync');
 
 const multerStorage = uploadcareStorage({
@@ -109,4 +110,25 @@ exports.getProductByAlias = catchAsync(async (req, res, next) => {
 
 exports.updateProduct = factory.updateOne(Product);
 
-exports.deleteProduct = factory.deleteOne(Product);
+exports.deleteProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return next(new AppError(`No product found with that ID`, 404));
+  }
+
+  const countOrder = await await Order.countDocuments({
+    products: { $elemMatch: { product: product._id } },
+  });
+
+  if (countOrder > 0) {
+    return next(new AppError(`Can not delete this product`, 403));
+  }
+
+  await product.deleteOne();
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
