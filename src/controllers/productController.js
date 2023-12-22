@@ -5,6 +5,7 @@ const factory = require('./handlerFactory');
 const Collection = require('../models/collectionModel');
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 const multerStorage = uploadcareStorage({

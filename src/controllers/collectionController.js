@@ -1,6 +1,7 @@
 const factory = require('./handlerFactory');
 const Collection = require('../models/collectionModel');
 const Product = require('../models/productModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.query = catchAsync(async (req, res, next) => {
